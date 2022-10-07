@@ -21,4 +21,25 @@
     - 原始モンテカルロ法？
       - ボードのサイズにかかわらず出来そう
     - 強化学習？
-    - 
+
+## やったこと
+- 2022-10-07
+  - https://weseek.co.jp/tech/1484/
+  - ```node src/index.js```
+    - これでサーバーを起動する
+  - 
+- 2022-10-04
+  - https://weseek.co.jp/tech/1484/
+  - package.json
+    - ```json
+      {
+      "name": "simple_chat",
+      "version": "1.0.0",
+      "main": "index.js",
+      "license": "MIT",
+      "dependencies": {
+      "express": "^4.17.1",
+      "socket.io": "^4.3.1"
+      }
+      ```
+- 
