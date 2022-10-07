@@ -27,6 +27,9 @@
   - https://weseek.co.jp/tech/1484/
   - ```node src/index.js```
     - これでサーバーを起動する
+    - 出来たこと
+      - ブラウザで入力した文字をサーバー側で受け取る。
+      - 
   - 
 - 2022-10-04
   - https://weseek.co.jp/tech/1484/
