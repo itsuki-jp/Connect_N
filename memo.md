@@ -23,6 +23,9 @@
     - 強化学習？
 
 ## やったこと
+- 2022-10-11
+  - https://www.youtube.com/watch?v=cXxEiWudIUY
+  - webSocket_MultiPlaterGame_Tutorialってフォルダを作って、npm initした
 - 2022-10-07
   - https://weseek.co.jp/tech/1484/
   - ```node src/index.js```
