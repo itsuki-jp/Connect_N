@@ -6,7 +6,7 @@ const server = http.createServer(app);
 
 // We define a route handler `/` that gets called when we hit out website home.
 app.get('/', (req, res) => {
-    res.send('<h1>Hello world</h1>');
+    res.sendFile(__dirname + '/index.html');
 });
 
 // We make the http server listen on port 3000
