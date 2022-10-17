@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h4>websocket</h4>
+    <h5>Group: <span id="group">darwin</span></h5>
+    <!-- a hardoced group name -->
+    <button onclick="bjoin();">join group</button><br>
+    <input id="text" type="text" />
+    <span id="out"></span>
+    <script>
+        var group = document.getElementById("group").textContent;
+
+        var ws = new WebSocket('ws://localhost:5000');
+        ws.onerror = function (e) { out.innerHTML = e; }
+        ws.onclose = function (e) { out.innerHTML = 'closed' + e; }
+        ws.onopen = function () {
+            out.innerHTML = 'connected ';
+        }
+        ws.onmessage = function (ms) { out.innerHTML += ms.data + '<br>'; }
+        function send(msg) {
+            ws.send(JSON.stringify({ msg: msg }));
+        }
+        function broadcast(msg, room) {
+            ws.send(JSON.stringify({ room: room, msg: msg }))
+        }
+        function join(room) {
+            ws.send(JSON.stringify({ join: room }));
+        }
+        function bjoin() {
+            //alert(group);
+            join(group);
+        }
+        text.onchange = function (el) {
+            //alert(el.target.value);
+            broadcast(el.target.value, group);
+        }
+    </script>
+</body>
+
+</html>
