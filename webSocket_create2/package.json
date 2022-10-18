@@ -1,6 +1,0 @@
-{
-  "name": "webSocket_create2",
-  "version": "0.0.1",
-  "description": "create and join room using webSocket",
-  "dependencies": {}
-}

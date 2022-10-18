@@ -17,21 +17,16 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    console.log(socket.rooms); // Set { <socket.id> }
-
-    socket.join("room1");
-
-    console.log(socket.rooms); // Set { <socket.id>, "room1" }
-
     // when special event "disconnect event" fired
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
 
-    // chat message event
-    socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
+    // join room event
+    socket.on('join room', (roomId) => {
+        console.log('Entered Room Id: ' + roomId);
+        socket.join(roomId);
+        io.to(roomId).emit('welcome new user', roomId); // broadcast to everyone in the room
     });
 });
 
