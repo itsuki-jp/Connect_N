@@ -24,6 +24,7 @@ io.on('connection', (socket) => {
 
     // join room event
     socket.on('join room', (roomId) => {
+        console.log('user ID:', socket.id);
         console.log('Entered Room Id: ' + roomId);
         socket.join(roomId);
         io.to(roomId).emit('welcome new user', roomId); // broadcast to everyone in the room
