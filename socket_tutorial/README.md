@@ -14,7 +14,6 @@
 2. npm install express@4
 3. node index.js でサーバーを立ち上げる。
    1. <a hred="http://localhost:3000">http://localhost:3000</a>
-   2. 
 
 ## Serving HTML
 
@@ -25,20 +24,22 @@
 
 ## Integrating Socket.IO
 
-- What is Socket.IO what is it composed from?
+- What is Socket.IO, what is it composed from?
   - A server that integrates with (or mounts on) the Node.js HTTP Server socket.io
   - A client library that loads in the browser side socket.io-client
 - How to install socket.io
   - ```npm install socket.io```
-- Load client-side JS file
+- Load local client-side JS file
   - ```node_modules/socket.io/client-dist/socket.io.js```
+
+## Emitting events
 - What can it do?
   - you(user?) can send and receive any events you want, with any data you want
 - Data type which socket.io can handle
   - any objects that can be encoded as JSON will do
   - binary data
-
-## Emitting events
 - Event
-  - disconnect
-  - 
+  - index.html
+    - fire event by writing ```socket.emit('some event')```
+  - index.js
+    - handle event by writing ```socket.on('some event',(arg)=>{});``` inside ```io.on('connection',(socket)=>{});```
