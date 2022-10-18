@@ -43,3 +43,18 @@
     - fire event by writing ```socket.emit('some event')```
   - index.js
     - handle event by writing ```socket.on('some event',(arg)=>{});``` inside ```io.on('connection',(socket)=>{});```
+
+## Broadcasting
+
+- what is broadcasting?
+  - emit the event from the server to the rest of the users.
+- How to broadcast to all connected sockets
+  - ```io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' });```
+- boradcast flag
+  - send message to everyone except for certain emitting socket
+```js
+io.on('connection', (socket) => {
+  socket.broadcast.emit('hi');
+});
+```
+    - 
