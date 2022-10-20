@@ -44,8 +44,9 @@
     </form>
 
     <form action="" id="createRoomForm">
-        <input type="text" name="" id="sizeX">
-        <input type="text" name="" id="sizeY">
+        <input type="text" name="" id="sizeX" placeholder="19">
+        <input type="text" name="" id="sizeY" placeholder="19">
+        <input type="text" name="" id="n" placeholder="5">
         <button id="createRoomBtn">Create Room</button>
     </form>
 
@@ -72,11 +73,17 @@
         document.getElementById('createRoomForm').addEventListener("submit", (e) => {
             e.preventDefault();
             console.log("click");
-            const sizeX = document.getElementById("sizeX");
-            const sizeY = document.getElementById("sizeY");
+            const sizeX = document.getElementById("sizeX").value;
+            const sizeY = document.getElementById("sizeY").value;
+            const n = document.getElementById("n").value;
             // Todo: numeric check(sizeX.value, sizeY.value)
-            socket.emit("create room", parseInt(sizeX.value), parseInt(sizeY.value));
+            socket.emit("create room", parseInt(sizeX), parseInt(sizeY), parseInt(n));
         });
+
+        socket.on("start game", () => {
+            console.log("start game");
+            document.write("<h1>GAME</h1>");
+        })
     </script>
 </body>
 

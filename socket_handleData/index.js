@@ -21,13 +21,43 @@ app.get('game.html', (req, res) => {
 /*
     {roomId:{
         clients:[ID_A, ID_B],
-        boardSize:{x:, y:},
-        board:[[],[]],
-        currentTurn:index of clients(0/1),
+        board:Board,
         
     }}
 */
 const roomObj = {}
+
+// Board Info
+/*
+    
+*/
+
+class Board {
+    constructor(sizeY, sizeX, n, board) {
+        this.x = sizeX;
+        this.y = sizeY;
+        this.white = 0;
+        this.black = 1;
+        this.blank = 9;
+        this.currentTurn = 0;
+        this.n = n;
+        this.board = [];
+        for (const line of board) this.board.push(line.concat());
+    }
+
+    copy(boadr) {
+        return new Board()
+    }
+
+    getStone(y, x) {
+        return this.board[y][x];
+    }
+
+    putStone(y, x) {
+        this.board[y][x] = this.currentTurn;
+        this.currentTurn ^= 1;
+    }
+}
 
 // listen on the connection event for incoming sockets
 io.on('connection', (socket) => {
@@ -54,10 +84,12 @@ io.on('connection', (socket) => {
         socket.join(roomId);
         roomObj[roomId].clients.push(socket.id);
         console.log(roomObj);
+
+        io.to(roomId).emit("start game",);
     });
 
     // create room event
-    socket.on('create room', (sizeX, sizeY) => {
+    socket.on('create room', (sizeX, sizeY, n) => {
         console.log('user ID:', socket.id);
         let roomId = undefined;
         for (; ;) {
@@ -67,11 +99,13 @@ io.on('connection', (socket) => {
         }
         console.log('created roomId: ' + roomId);
         socket.join(roomId);
+
+        let tmp_board = [];
+        for (var i = 0; i < sizeY; i++) tmp_board.push(Array(sizeX).fill(0));
         roomObj[roomId] = {
             clients: [socket.id],
-            boardSize: { x: sizeX, y: sizeY },
+            board: new Board(sizeY, sizeX, n, tmp_board)
         };
-        // Todo: Init board using the size given
     });
 });
 
@@ -79,3 +113,8 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
     console.log('listening on *:3000');
 });
+
+
+
+
+
