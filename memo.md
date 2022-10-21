@@ -23,6 +23,10 @@
     - 強化学習？
 
 ## やったこと
+- 2022-10-21まで
+  - Create/Join Roomの実装
+  - Renderにデプロイ
+    - よくわからんが、npmよりyarnの方が良さそう。
 - 2022-10-11
   - https://www.youtube.com/watch?v=cXxEiWudIUY
   - webSocket_MultiPlaterGame_Tutorialってフォルダを作って、npm initした

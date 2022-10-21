@@ -17,6 +17,7 @@ app.get('game.html', (req, res) => {
     res.sendFile(__dirname + '/game.html');
 })
 
+console.log(__dirname);
 // Room Info
 /*
     {roomId:{
@@ -41,12 +42,13 @@ class Board {
         this.blank = 9;
         this.currentTurn = 0;
         this.n = n;
-        this.board = [];
-        for (const line of board) this.board.push(line.concat());
+        this.board = board;
     }
 
-    copy(boadr) {
-        return new Board()
+    copy(board) {
+        const tmp_board = []
+        for (const line of board) tmp_board.push(line.concat());
+        return new Board(this.y, this.x, this.n, tmp_board);
     }
 
     getStone(y, x) {
@@ -85,7 +87,8 @@ io.on('connection', (socket) => {
         roomObj[roomId].clients.push(socket.id);
         console.log(roomObj);
 
-        io.to(roomId).emit("start game",);
+        const board_tmp = roomObj[roomId].board;
+        io.to(roomId).emit("start game", board_tmp.y, board_tmp.x);
     });
 
     // create room event

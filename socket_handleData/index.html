@@ -45,9 +45,9 @@
         </form>
 
         <form action="" id="createRoomForm">
-            <input type="text" name="" id="sizeX" placeholder="19">
-            <input type="text" name="" id="sizeY" placeholder="19">
-            <input type="text" name="" id="n" placeholder="5">
+            <input type="text" name="" id="sizeX" value="13">
+            <input type="text" name="" id="sizeY" value="13">
+            <input type="text" name="" id="n" value="5">
             <button id="createRoomBtn">Create Room</button>
         </form>
     </div>
@@ -82,10 +82,44 @@
             socket.emit("create room", parseInt(sizeX), parseInt(sizeY), parseInt(n));
         });
 
-        socket.on("start game", () => {
+        socket.on("start game", (y, x) => {
             console.log("start game");
-            document.write("<h1>GAME</h1>");
+            initGame(y, x);
+
+
         })
+
+        const tileX = 30;
+        const tileY = 30;
+
+        function initGame(y, x) {
+            const main = document.getElementById("main");
+            main.innerHTML = "";
+
+            const canvas = document.createElement("canvas");
+            canvas.width = 500;
+            canvas.height = 500;
+            const ctx = canvas.getContext("2d");
+            document.getElementById("main").appendChild(canvas);
+
+            clearBoard(y, x, ctx);
+
+        }
+
+        function clearBoard(y, x, ctx) {
+            ctx.beginPath();
+            ctx.fillStyle = "#FFE4B5";
+            ctx.fillRect(0, 0, x * tileX, y * tileY);
+            ctx.strokeStyle = 'black';
+            for (let i = 0; i < y; i++) {
+                for (let j = 0; j < x; j++) {
+                    console.log("line")
+                    ctx.rect(j * tileX, i * tileY, tileX, tileY);
+                    ctx.lineWidth = 1;
+                }
+            }
+            ctx.stroke();
+        }
     </script>
 </body>
 
