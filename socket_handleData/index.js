@@ -18,6 +18,9 @@ app.get('game.html', (req, res) => {
 })
 
 console.log(__dirname);
+
+const client_room_id_map = {}
+
 // Room Info
 /*
     {roomId:{
@@ -27,11 +30,6 @@ console.log(__dirname);
     }}
 */
 const roomObj = {}
-
-// Board Info
-/*
-    
-*/
 
 class Board {
     constructor(sizeY, sizeX, n, board) {
@@ -68,13 +66,15 @@ io.on('connection', (socket) => {
     // when special event "disconnect event" fired
     socket.on('disconnect', () => {
         console.log('user disconnected');
+        // Todo: ユーザーの片方が消えたら部屋を消す
     });
 
     // join room event
     socket.on('join room', (roomId) => {
+        separation()
+        console.log("Join Room");
         console.log('user ID:', socket.id);
         console.log('Try: Enter Room Id: ' + roomId);
-        console.log(roomObj);
         if (!(roomId in roomObj)) {
             console.log('Room not found');
             return;
@@ -85,14 +85,18 @@ io.on('connection', (socket) => {
         }
         socket.join(roomId);
         roomObj[roomId].clients.push(socket.id);
-        console.log(roomObj);
+        console.log(`Entered Room: ${roomObj}`);
+        client_room_id_map[socket.id] = roomId;
 
         const board_tmp = roomObj[roomId].board;
         io.to(roomId).emit("start game", board_tmp.y, board_tmp.x);
+        console.log(roomObj);
     });
 
     // create room event
     socket.on('create room', (sizeX, sizeY, n) => {
+        separation()
+        console.log("create room");
         console.log('user ID:', socket.id);
         let roomId = undefined;
         for (; ;) {
@@ -102,16 +106,38 @@ io.on('connection', (socket) => {
         }
         console.log('created roomId: ' + roomId);
         socket.join(roomId);
+        client_room_id_map[socket.id] = roomId;
+        console.log(client_room_id_map);
 
         let tmp_board = [];
-        for (var i = 0; i < sizeY; i++) tmp_board.push(Array(sizeX).fill(0));
+        // blank -> 9
+        for (var i = 0; i < sizeY; i++) tmp_board.push(Array(sizeX).fill(9));
         roomObj[roomId] = {
             clients: [socket.id],
             board: new Board(sizeY, sizeX, n, tmp_board)
         };
+        io.to(roomId).emit("get value", roomId);
     });
+
+    socket.on("check placeable", (y, x) => {
+        separation()
+        console.log("check placeable");
+        const roomId = client_room_id_map[socket.id];
+        const currentRoomObj = roomObj[roomId];
+        const currentBoard = currentRoomObj.board;
+        const client = currentRoomObj.clients;
+        if (currentBoard.getStone(y, x) !== currentBoard.blank) return;
+
+        if (client[currentBoard.currentTurn] !== socket.id) return;
+        
+        io.to(roomId).emit("draw tile", y, x, currentBoard.currentTurn);
+        currentBoard.currentTurn ^= 1;
+    })
 });
 
+function separation() {
+    console.log("-----------------");
+}
 const PORT = Number(process.env.PORT) || 3000;
 // We make the http server listen on port 3000
 server.listen(PORT, () => {
