@@ -8,11 +8,9 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 
-app.use(express.static('public'));
-
 // We define a route handler `/` that gets called when we hit out website home.
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 console.log(__dirname);
@@ -53,7 +51,6 @@ class Board {
 
     putStone(y, x) {
         this.board[y][x] = this.currentTurn;
-        this.currentTurn ^= 1;
     }
 }
 
@@ -64,7 +61,7 @@ io.on('connection', (socket) => {
     // when special event "disconnect event" fired
     socket.on('disconnect', () => {
         console.log('user disconnected');
-        // Todo: delete roomObj when one of the user disconnected
+        // Todo: ユーザーの片方が消えたら部屋を消す
     });
 
     // join room event
@@ -118,8 +115,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on("check placeable", (y, x) => {
-        separation()
-        console.log("check placeable");
         const roomId = client_room_id_map[socket.id];
         const currentRoomObj = roomObj[roomId];
         const currentBoard = currentRoomObj.board;
@@ -127,11 +122,53 @@ io.on('connection', (socket) => {
         if (currentBoard.getStone(y, x) !== currentBoard.blank) return;
 
         if (client[currentBoard.currentTurn] !== socket.id) return;
-        
+
         io.to(roomId).emit("draw tile", y, x, currentBoard.currentTurn);
+        currentBoard.putStone(y, x);
+
+        const isGameEnd = checkGameEnd(currentRoomObj.board);
+        if (isGameEnd) {
+            console.log("game end");
+            for (let clientTmp of currentRoomObj.clients) {
+                console.log(clientTmp)
+                let message = "You won";
+                if (clientTmp !== socket.id) message = "You lose";
+                io.to(clientTmp).emit("show message", message);
+            }
+        }
         currentBoard.currentTurn ^= 1;
     })
 });
+
+function checkGameEnd(currentBoardObj) {
+    separation()
+    console.log("checkGameEnd");
+    let isGameEnd = false;
+    // Better: 全探索でも良いが、尺取法の方が計算量落ちる
+    for (let i = 0; i < currentBoardObj.y; i++) {
+        for (let j = 0; j < currentBoardObj.x; j++) {
+            isGameEnd |= checkBoardLine(currentBoardObj, j, i, 0, 1, currentBoardObj.n);
+            isGameEnd |= checkBoardLine(currentBoardObj, j, i, 1, 0, currentBoardObj.n);
+            isGameEnd |= checkBoardLine(currentBoardObj, j, i, 1, 1, currentBoardObj.n);
+            isGameEnd |= checkBoardLine(currentBoardObj, j, i, -1, 1, currentBoardObj.n);
+        }
+    }
+    console.log(isGameEnd);
+    return isGameEnd;
+}
+
+function checkBoardLine(boardObj, x, y, dx, dy, n) {
+    const mxX = boardObj.x;
+    const mxY = boardObj.y;
+    let count = 0
+    for (let i = 0; i < n; i++) {
+        if (x < 0 || mxX <= x || y < 0 || mxY <= y) return false;
+        count += boardObj.currentTurn === boardObj.board[y][x];
+        x += dx;
+        y += dy;
+    }
+    return count === n;
+}
 
 function separation() {
     console.log("-----------------");
