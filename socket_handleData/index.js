@@ -8,14 +8,12 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 
+app.use(express.static('public'));
+
 // We define a route handler `/` that gets called when we hit out website home.
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
-
-app.get('/game', (req, res) => {
-    res.sendFile(__dirname + '/game.html');
-})
 
 console.log(__dirname);
 
