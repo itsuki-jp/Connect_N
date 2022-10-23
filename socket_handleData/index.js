@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.get('game.html', (req, res) => {
+app.get('/game', (req, res) => {
     res.sendFile(__dirname + '/game.html');
 })
 
@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
     // when special event "disconnect event" fired
     socket.on('disconnect', () => {
         console.log('user disconnected');
-        // Todo: ユーザーの片方が消えたら部屋を消す
+        // Todo: delete roomObj when one of the user disconnected
     });
 
     // join room event
