@@ -1,7 +1,3 @@
-let playMode = undefined;
-const tileX = 30;
-const tileY = 30;
-
 class Board {
     constructor(x, y, n, board, turn) {
         this.x = x;
@@ -78,6 +74,10 @@ class Board {
         this.currentTurn ^= 1;
     }
 }
+
+let playMode = undefined;
+const tileX = 30;
+const tileY = 30;
 
 document.getElementById('lv1').addEventListener('click', () => {
     playMode = 1;
