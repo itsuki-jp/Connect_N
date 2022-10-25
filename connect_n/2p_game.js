@@ -79,30 +79,11 @@ class Board {
     }
 }
 
-class Game {
-    /** @param {Board} board */
-    constructor(board) {
-        this.board = board.copy();
-    }
-}
-
 document.getElementById('lv0').addEventListener('click', () => {
     playMode = 0;
     askGameInfo();
 })
 
-document.getElementById('lv1').addEventListener('click', () => {
-    playMode = 1;
-    askGameInfo();
-})
-document.getElementById('lv2').addEventListener('click', () => {
-    playMode = 2;
-    askGameInfo();
-})
-document.getElementById('lv3').addEventListener('click', () => {
-    playMode = 3;
-    askGameInfo();
-})
 
 function askGameInfo() {
     document.getElementById('main').innerHTML = '';
@@ -173,6 +154,11 @@ function playMode01(posX, posY, ctx, board) {
         alert(`The winner is ${board.currentTurn === 0 ? 'black' : 'white'} !!!`)
     }
     board.changeTurn();
+}
+
+// MonteCarlo...!!!
+function playMode02(posX, posY, ctx, board) {
+
 }
 
 function initGame(x, y, n) {
