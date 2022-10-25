@@ -133,33 +133,9 @@ function playMode00(posX, posY, ctx, board) {
     drawTile(posX, posY, ctx, board.currentTurn);
     board.putStone(posX, posY);
     if (board.checkGameEnd()) {
-        alert(`The winner is ${board.currentTurn === 0 ? 'black' : 'white'} !!!`)
+        alert(`The winner is ${board.currentTurn === 1 ? 'black' : 'white'} !!!`)
     }
     board.changeTurn();
-}
-
-function playMode01(posX, posY, ctx, board) {
-    drawTile(posX, posY, ctx, board.currentTurn);
-    board.putStone(posX, posY);
-    if (board.checkGameEnd()) {
-        alert(`The winner is ${board.currentTurn === 0 ? 'black' : 'white'} !!!`)
-    }
-    board.changeTurn();
-
-    const placeablePosArr = board.getPlaceablePosArr();
-    const placePos = placeablePosArr[Math.floor(Math.random() * placeablePosArr.length)];
-    const [x, y] = placePos;
-    drawTile(x, y, ctx, board.currentTurn);
-    board.putStone(x, y);
-    if (board.checkGameEnd()) {
-        alert(`The winner is ${board.currentTurn === 0 ? 'black' : 'white'} !!!`)
-    }
-    board.changeTurn();
-}
-
-// MonteCarlo...!!!
-function playMode02(posX, posY, ctx, board) {
-
 }
 
 function initGame(x, y, n) {

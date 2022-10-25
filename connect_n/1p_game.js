@@ -1,5 +1,5 @@
 class Board {
-    constructor(x, y, n, board, turn) {
+    constructor(x, y, n, board, turn, remain) {
         this.x = x;
         this.y = y;
         this.white = 0;
@@ -8,12 +8,13 @@ class Board {
         this.currentTurn = turn;
         this.n = n;
         this.board = board;
+        this.remain = remain;
     }
 
-    copy(board) {
+    copy() {
         const tmp_board = []
-        for (const line of board) tmp_board.push(line.concat());
-        return new Board(this.y, this.x, this.n, tmp_board, this.currentTurn);
+        for (const line of this.board) tmp_board.push(line.concat());
+        return new Board(this.y, this.x, this.n, tmp_board, this.currentTurn, this.remain);
     }
 
     getStone(x, y) {
@@ -22,6 +23,7 @@ class Board {
 
     putStone(x, y) {
         this.board[y][x] = this.currentTurn;
+        this.remain--;
     }
 
     /** return [(x,y),..] */
@@ -61,8 +63,12 @@ class Board {
                 isGameEnd |= this.checkBoardLine(j, i, -1, 1);
             }
         }
-        console.log(isGameEnd);
         return isGameEnd;
+    }
+
+    getRandomPos() {
+        const temp = this.getPlaceablePosArr();
+        return temp[Math.floor(Math.random() * temp.length)];
     }
 
     checkPlaceable(x, y) {
@@ -97,13 +103,13 @@ function askGameInfo() {
     const form = document.createElement('form');
 
     const x = document.createElement('input');
-    x.value = 13, x.id = 'x';
+    x.value = 3, x.id = 'x';
 
     const y = document.createElement('input');
-    y.value = 13, y.id = 'y';
+    y.value = 3, y.id = 'y';
 
     const n = document.createElement('input');
-    n.value = 5, n.id = 'n';
+    n.value = 3, n.id = 'n';
 
     const startBtn = document.createElement('button');
     startBtn.id = 'startBtn'; startBtn.innerText = 'START GAME';
@@ -131,24 +137,15 @@ function clearBoard(x, y, ctx) {
 }
 
 function drawTile(x, y, ctx, turn) {
-    ctx.fillStyle = turn === 0 ? 'black' : 'white';
+    ctx.fillStyle = turn === 1 ? 'black' : 'white';
     ctx.fillRect(x * tileX, y * tileY, tileX, tileY);
-}
-
-function playMode00(posX, posY, ctx, board) {
-    drawTile(posX, posY, ctx, board.currentTurn);
-    board.putStone(posX, posY);
-    if (board.checkGameEnd()) {
-        alert(`The winner is ${board.currentTurn === 0 ? 'black' : 'white'} !!!`)
-    }
-    board.changeTurn();
 }
 
 function playMode01(posX, posY, ctx, board) {
     drawTile(posX, posY, ctx, board.currentTurn);
     board.putStone(posX, posY);
     if (board.checkGameEnd()) {
-        alert(`The winner is ${board.currentTurn === 0 ? 'black' : 'white'} !!!`)
+        alert(`The winner is ${board.currentTurn === 1 ? 'black' : 'white'} !!!`)
     }
     board.changeTurn();
 
@@ -158,14 +155,62 @@ function playMode01(posX, posY, ctx, board) {
     drawTile(x, y, ctx, board.currentTurn);
     board.putStone(x, y);
     if (board.checkGameEnd()) {
-        alert(`The winner is ${board.currentTurn === 0 ? 'black' : 'white'} !!!`)
+        alert(`The winner is ${board.currentTurn === 1 ? 'black' : 'white'} !!!`)
     }
     board.changeTurn();
 }
 
+
 // MonteCarlo...!!!
 function playMode02(posX, posY, ctx, board) {
+    console.log(`currentTurn: ${board.currentTurn}`);
+    if (board.currentTurn === board.black) {
+        board.putStone(posX, posY);
+        drawTile(posX, posY, ctx, board.currentTurn);
+        if (board.checkGameEnd()) {
+            alert(`The winner is ${(board.currentTurn) === 1 ? 'black' : 'white'} !!!`)
+        }
+        board.changeTurn();
 
+        const looplimit = Math.pow(10, 3);
+        const placeablePosArr = board.getPlaceablePosArr();
+        const eval = Array(placeablePosArr.length).fill(0);
+        const count = Array(placeablePosArr.length).fill(0);
+        for (let i = 0; i < looplimit; i++) {
+            const arrPos = Math.floor(Math.random() * placeablePosArr.length);
+            const [x, y] = placeablePosArr[arrPos];
+            const newBoard = board.copy();
+            for (let rm = newBoard.remain; rm !== 0; rm--) {
+                if (board.remain === rm) {
+                    newBoard.putStone(x, y);
+                } else {
+                    const [posX, posY] = newBoard.getRandomPos();
+                    newBoard.putStone(posX, posY);
+                }
+                if (newBoard.checkGameEnd()) {
+                    eval[arrPos] += newBoard.currentTurn === board.currentTurn ? 1 : -1;
+                    count[arrPos]++;
+                    break;
+                }
+                newBoard.changeTurn();
+            }
+        }
+        console.log(placeablePosArr);
+        console.log(eval)
+        let maxVal = -1 * 1 << 10;
+        let res = undefined;
+        for (let i = 0; i < placeablePosArr.length; i++) {
+            if (maxVal < eval[i] / count[i]) {
+                maxVal = eval[i] / count[i];
+                res = placeablePosArr[i];
+            }
+        }
+        console.log(res);
+        drawTile(res[0], res[1], ctx, board.currentTurn);
+        board.putStone(res[0], res[1]);
+        board.changeTurn();
+        return res;
+    }
 }
 
 function initGame(x, y, n) {
@@ -185,7 +230,7 @@ function initGame(x, y, n) {
     for (var i = 0; i < y; i++) tmp_board.push(Array(x).fill(9));
 
 
-    const board = new Board(x, y, n, tmp_board, 0);
+    const board = new Board(x, y, n, tmp_board, 1, x * y);
 
     console.log("playeMode:", playMode)
     document.getElementById('canvas').addEventListener('click', (e) => {
@@ -206,11 +251,11 @@ function initGame(x, y, n) {
         let isPlaceable = board.checkPlaceable(posX, posY);
         if (!isPlaceable) return;
 
-        if (playMode === 0) {
-            playMode00(posX, posY, ctx, board);
-        }
-        else if (playMode === 1) {
+
+        if (playMode === 1) {
             playMode01(posX, posY, ctx, board);
+        } else if (playMode === 2) {
+            playMode02(posX, posY, ctx, board);
         }
     });
 }
