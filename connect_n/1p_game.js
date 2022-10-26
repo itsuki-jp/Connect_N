@@ -66,6 +66,14 @@ class Board {
         return isGameEnd;
     }
 
+    /**
+     * return True if draw else False
+     * @returns {boolean}
+     */
+    checkDraw() {
+        return this.remain === 0;
+    }
+
     getRandomPos() {
         const temp = this.getPlaceablePosArr();
         return temp[Math.floor(Math.random() * temp.length)];
@@ -146,16 +154,22 @@ function playMode01(posX, posY, ctx, board) {
     board.putStone(posX, posY);
     if (board.checkGameEnd()) {
         alert(`The winner is ${board.currentTurn === 1 ? 'black' : 'white'} !!!`)
+        return;
+    } else if (board.checkDraw()) {
+        alert("Draw");
+        return;
     }
     board.changeTurn();
 
-    const placeablePosArr = board.getPlaceablePosArr();
-    const placePos = placeablePosArr[Math.floor(Math.random() * placeablePosArr.length)];
-    const [x, y] = placePos;
+    const [x, y] = board.getRandomPos();
     drawTile(x, y, ctx, board.currentTurn);
     board.putStone(x, y);
     if (board.checkGameEnd()) {
         alert(`The winner is ${board.currentTurn === 1 ? 'black' : 'white'} !!!`)
+    }
+    else if (board.checkDraw()) {
+        alert("Draw");
+        return;
     }
     board.changeTurn();
 }
@@ -168,15 +182,19 @@ function playMode02(posX, posY, ctx, board) {
         board.putStone(posX, posY);
         drawTile(posX, posY, ctx, board.currentTurn);
         if (board.checkGameEnd()) {
-            alert(`The winner is ${(board.currentTurn) === 1 ? 'black' : 'white'} !!!`)
+            alert(`The winner is ${(board.currentTurn) === 1 ? 'black' : 'white'} !!!`);
+            return;
+        } else if (board.checkDraw()) {
+            alert("Draw");
+            return;
         }
         board.changeTurn();
 
-        const looplimit = Math.pow(10, 3);
+        const looplimit = Math.pow(10, 4);
         const placeablePosArr = board.getPlaceablePosArr();
         const eval = Array(placeablePosArr.length).fill(0);
         const count = Array(placeablePosArr.length).fill(0);
-        for (let i = 0; i < looplimit; i++) {
+        for (let nowloop = 0; nowloop < looplimit; nowloop++) {
             const arrPos = Math.floor(Math.random() * placeablePosArr.length);
             const [x, y] = placeablePosArr[arrPos];
             const newBoard = board.copy();
