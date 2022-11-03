@@ -106,27 +106,43 @@ document.getElementById('lv3').addEventListener('click', () => {
     askGameInfo();
 })
 
+function isNumber(input) {
+    let pattern = /^\d*$/;
+    return pattern.test(input);
+}
+
 function askGameInfo() {
     document.getElementById('main').innerHTML = '';
     const form = document.createElement('form');
+    const wrap = document.createElement('div');
+    wrap.id = 'wrap';
+    form.appendChild(wrap);
 
     const x = document.createElement('input');
-    x.value = 3, x.id = 'x';
+    x.placeholder = 'width', x.id = 'x';
 
     const y = document.createElement('input');
-    y.value = 3, y.id = 'y';
+    y.placeholder = 'height', y.id = 'y';
 
     const n = document.createElement('input');
-    n.value = 3, n.id = 'n';
+    n.placeholder = 'connect number', n.id = 'n';
 
     const startBtn = document.createElement('button');
     startBtn.id = 'startBtn'; startBtn.innerText = 'START GAME';
+
+    wrap.appendChild(x); wrap.appendChild(y); wrap.appendChild(n); wrap.appendChild(startBtn);
+    document.getElementById('main').appendChild(form);
+
     startBtn.addEventListener('click', () => {
+        for (let input of [x, y, n]) {
+            if (!isNumber(input.value)) {
+                alert('Please Enter valid number');
+                askGameInfo();
+                return;
+            };
+        }
         initGame(parseInt(x.value), parseInt(y.value), parseInt(n.value));
     })
-
-    form.appendChild(x); form.appendChild(y); form.appendChild(n); form.appendChild(startBtn);
-    document.getElementById('main').appendChild(form);
 }
 
 

@@ -85,6 +85,10 @@ document.getElementById('lv0').addEventListener('click', () => {
     askGameInfo();
 })
 
+function isNumber(input) {
+    let pattern = /^\d*$/;
+    return pattern.test(input);
+}
 
 function askGameInfo() {
     document.getElementById('main').innerHTML = '';
@@ -94,22 +98,31 @@ function askGameInfo() {
     form.appendChild(wrap);
 
     const x = document.createElement('input');
-    x.value = 13, x.id = 'x';
+    x.placeholder = 'width', x.id = 'x';
 
     const y = document.createElement('input');
-    y.value = 13, y.id = 'y';
+    y.placeholder = 'height', y.id = 'y';
 
     const n = document.createElement('input');
-    n.value = 5, n.id = 'n';
+    n.placeholder = 'connect number', n.id = 'n';
 
     const startBtn = document.createElement('button');
     startBtn.id = 'startBtn'; startBtn.innerText = 'START GAME';
-    startBtn.addEventListener('click', () => {
-        initGame(parseInt(x.value), parseInt(y.value), parseInt(n.value));
-    })
 
     wrap.appendChild(x); wrap.appendChild(y); wrap.appendChild(n); wrap.appendChild(startBtn);
     document.getElementById('main').appendChild(form);
+
+
+    startBtn.addEventListener('click', () => {
+        for (let input of [x, y, n]) {
+            if (!isNumber(input.value)) {
+                alert('Please Enter valid number');
+                askGameInfo();
+                return;
+            };
+        }
+        initGame(parseInt(x.value), parseInt(y.value), parseInt(n.value));
+    })
 }
 
 
