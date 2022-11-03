@@ -158,11 +158,17 @@ function clearBoard(x, y, ctx) {
         }
     }
     ctx.stroke();
+    ctx.closePath();
 }
 
 function drawTile(x, y, ctx, turn) {
-    ctx.fillStyle = turn === 1 ? 'black' : 'white';
+    ctx.beginPath();
+    ctx.fillStyle = turn === 1 ? 'black' : '#ffffd1';
     ctx.fillRect(x * tileX, y * tileY, tileX, tileY);
+    ctx.strokeStyle = 'grey';
+    ctx.rect(x * tileX, y * tileY, tileX, tileY);
+    ctx.stroke();
+    ctx.closePath();
 }
 
 function playMode01(posX, posY, ctx, board) {

@@ -8,6 +8,7 @@ class Board {
         this.currentTurn = turn;
         this.n = n;
         this.board = board;
+        this.remain = x * y;
     }
 
     copy(board) {
@@ -22,6 +23,7 @@ class Board {
 
     putStone(x, y) {
         this.board[y][x] = this.currentTurn;
+        this.remain--;
     }
 
     /** return [(x,y),..] */
@@ -72,6 +74,10 @@ class Board {
 
     changeTurn() {
         this.currentTurn ^= 1;
+    }
+
+    checkDraw() {
+        return this.remain === 0;
     }
 }
 
@@ -138,11 +144,17 @@ function clearBoard(x, y, ctx) {
         }
     }
     ctx.stroke();
+    ctx.closePath();
 }
 
 function drawTile(x, y, ctx, turn) {
-    ctx.fillStyle = turn === 0 ? 'black' : 'white';
+    ctx.beginPath();
+    ctx.fillStyle = turn === 1 ? 'black' : '#ffffd1';
     ctx.fillRect(x * tileX, y * tileY, tileX, tileY);
+    ctx.strokeStyle = 'grey';
+    ctx.rect(x * tileX, y * tileY, tileX, tileY);
+    ctx.stroke();
+    ctx.closePath();
 }
 
 function playMode00(posX, posY, ctx, board) {
@@ -150,6 +162,9 @@ function playMode00(posX, posY, ctx, board) {
     board.putStone(posX, posY);
     if (board.checkGameEnd()) {
         alert(`The winner is ${board.currentTurn === 1 ? 'black' : 'white'} !!!`)
+    } else if (board.checkDraw()) {
+        alert("Draw");
+        return;
     }
     board.changeTurn();
 }
@@ -171,7 +186,7 @@ function initGame(x, y, n) {
     for (var i = 0; i < y; i++) tmp_board.push(Array(x).fill(9));
 
 
-    const board = new Board(x, y, n, tmp_board, 0);
+    const board = new Board(x, y, n, tmp_board, 1);
 
     console.log("playeMode:", playMode)
     document.getElementById('canvas').addEventListener('click', (e) => {
