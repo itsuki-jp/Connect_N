@@ -20,3 +20,11 @@ button {
 button:first-child {
     margin-top: 15%;
 }
+
+form {
+    padding: 10px;
+    margin: 20px;
+
+    /*コレ*/
+
+}

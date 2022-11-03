@@ -89,6 +89,9 @@ document.getElementById('lv0').addEventListener('click', () => {
 function askGameInfo() {
     document.getElementById('main').innerHTML = '';
     const form = document.createElement('form');
+    const wrap = document.createElement('div');
+    wrap.id = 'wrap';
+    form.appendChild(wrap);
 
     const x = document.createElement('input');
     x.value = 13, x.id = 'x';
@@ -105,7 +108,7 @@ function askGameInfo() {
         initGame(parseInt(x.value), parseInt(y.value), parseInt(n.value));
     })
 
-    form.appendChild(x); form.appendChild(y); form.appendChild(n); form.appendChild(startBtn);
+    wrap.appendChild(x); wrap.appendChild(y); wrap.appendChild(n); wrap.appendChild(startBtn);
     document.getElementById('main').appendChild(form);
 }
 
